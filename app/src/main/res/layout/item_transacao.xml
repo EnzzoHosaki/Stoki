@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingVertical="12dp"
+    android:paddingHorizontal="16dp">
+
+    <ImageView
+        android:id="@+id/imageView_icon_background"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="@drawable/bg_icon_transacao"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/imageView_icon_transacao"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        app:layout_constraintBottom_toBottomOf="@id/imageView_icon_background"
+        app:layout_constraintEnd_toEndOf="@id/imageView_icon_background"
+        app:layout_constraintStart_toStartOf="@id/imageView_icon_background"
+        app:layout_constraintTop_toTopOf="@id/imageView_icon_background"
+        tools:src="@drawable/ic_transacao_compra" />
+
+    <TextView
+        android:id="@+id/textView_tipo_transacao"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:textColor="@color/text_primary_dark"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@id/imageView_icon_background"
+        app:layout_constraintTop_toTopOf="@id/imageView_icon_background"
+        tools:text="Compra" />
+
+    <TextView
+        android:id="@+id/textView_data_transacao"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/text_secondary_dark"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="@id/imageView_icon_background"
+        app:layout_constraintStart_toStartOf="@id/textView_tipo_transacao"
+        app:layout_constraintTop_toBottomOf="@id/textView_tipo_transacao"
+        tools:text="14-05-2025" />
+
+    <TextView
+        android:id="@+id/textView_valor_transacao"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/text_primary_dark"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="R$1.200" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
