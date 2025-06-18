@@ -1,15 +1,23 @@
-*.iml
-.gradle
-/local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
+# Arquivos gerados pelo Gradle
+*.apk
+*.aab
+*.ap_
+*.dex
+build/
+.gradle/
+captures/
 .DS_Store
-/build
-/captures
-.externalNativeBuild
-.cxx
+
+# Arquivos de configuração local (não devem ser compartilhados)
 local.properties
+
+# Logs
+*.log
+
+# Arquivos de configuração do IntelliJ / Android Studio
+/.idea/
+# Lixo do MacOS
+__MACOSX/
+
+# Arquivos gerados pelo KSP/KAPT
+/build/generated
