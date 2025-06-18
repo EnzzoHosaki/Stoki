@@ -1,5 +1,15 @@
 <resources>
-    <string name="app_name">Stoki</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="add_product_title">Adicionar Produto</string>
+    <string name="edit_product_title">Editar Produto</string>
+    <string name="product_photo_label">Foto do Produto</string>
+    <string name="take_photo_button">Tirar Foto</string>
+    <string name="gallery_button">Galeria</string>
+    <string name="product_name_hint">Nome do Produto</string>
+    <string name="barcode_hint">Código de Barras</string>
+    <string name="category_hint">Categoria</string>
+    <string name="initial_quantity_hint">Quantidade Inicial</string>
+    <string name="stock_quantity_hint">Quantidade em Estoque</string>
+    <string name="cost_price_hint">Preço de Custo</string>
+    <string name="sale_price_hint">Preço de Venda</string>
+    <string name="finish_button">Concluir</string>
 </resources>

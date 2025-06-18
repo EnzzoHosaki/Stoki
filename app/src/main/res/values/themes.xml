@@ -1,9 +1,28 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.Stoki" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+    <style name="Theme.Stoki" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/stoki_green</item>
+        <item name="colorPrimaryVariant">@color/stoki_green</item>
+        <item name="colorOnPrimary">@color/black</item>
+        <item name="colorSecondary">@color/stoki_green</item>
+        <item name="colorSecondaryVariant">@color/stoki_green</item>
+        <item name="colorOnSecondary">@color/black</item>
+
+        <item name="android:statusBarColor">@color/background_dark</item>
+
+        <item name="materialButtonStyle">@style/Widget.Stoki.Button</item>
     </style>
 
-    <style name="Theme.Stoki" parent="Base.Theme.Stoki" />
+    <style name="Widget.Stoki.TextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="android:layout_marginTop">16dp</item>
+        <item name="android:textColorHint">@color/text_secondary_dark</item>
+        <item name="boxStrokeColor">@color/text_secondary_dark</item>
+    </style>
+
+    <style name="Widget.Stoki.Button" parent="Widget.MaterialComponents.Button">
+        <item name="android:backgroundTint">@color/stoki_green</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:layout_height">60dp</item>
+        <item name="cornerRadius">16dp</item>
+    </style>
+
 </resources>

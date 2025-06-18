@@ -1,0 +1,409 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+    xmlns:tools="http://schemas.android.com/tools"
+
+    android:layout_width="match_parent"
+
+    android:layout_height="match_parent"
+
+    android:background="@color/background_dark"
+
+    tools:context=".ui.ProdutoFormFragment">
+
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+
+        android:layout_width="match_parent"
+
+        android:layout_height="wrap_content"
+
+        android:padding="16dp">
+
+
+
+        <ImageView
+
+            android:id="@+id/button_fechar"
+
+            android:layout_width="24dp"
+
+            android:layout_height="24dp"
+
+            android:src="@drawable/ic_close"
+
+            app:layout_constraintStart_toStartOf="parent"
+
+            app:layout_constraintTop_toTopOf="parent"
+
+            app:tint="@color/white" />
+
+
+
+        <TextView
+
+            android:id="@+id/textView_title"
+
+            android:layout_width="wrap_content"
+
+            android:layout_height="wrap_content"
+
+            android:textColor="@color/white"
+
+            android:textSize="18sp"
+
+            android:textStyle="bold"
+
+            app:layout_constraintBottom_toBottomOf="@id/button_fechar"
+
+            app:layout_constraintEnd_toEndOf="parent"
+
+            app:layout_constraintStart_toStartOf="parent"
+
+            app:layout_constraintTop_toTopOf="@id/button_fechar"
+
+            tools:text="Adicionar Produto" />
+
+
+
+        <TextView
+
+            android:id="@+id/label_foto_produto"
+
+            android:layout_width="wrap_content"
+
+            android:layout_height="wrap_content"
+
+            android:layout_marginTop="32dp"
+
+            android:text="Foto do Produto"
+
+            android:textColor="@color/white"
+
+            app:layout_constraintStart_toStartOf="parent"
+
+            app:layout_constraintTop_toBottomOf="@id/button_fechar" />
+
+
+
+        <com.google.android.material.imageview.ShapeableImageView
+
+            android:id="@+id/imageView_produto_foto"
+
+            android:layout_width="120dp"
+
+            android:layout_height="120dp"
+
+            android:layout_marginTop="8dp"
+
+            android:background="#3A3A3C"
+
+            android:padding="32dp"
+
+            android:scaleType="centerCrop"
+
+            app:layout_constraintStart_toStartOf="parent"
+
+            app:layout_constraintTop_toBottomOf="@id/label_foto_produto"
+
+            app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Medium"
+
+            app:srcCompat="@drawable/ic_image_placeholder"
+
+            app:tint="@color/text_secondary_dark" />
+
+
+
+        <com.google.android.material.button.MaterialButton
+
+            android:id="@+id/button_tirar_foto"
+
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+
+            android:layout_width="0dp"
+
+            android:layout_height="wrap_content"
+
+            android:layout_marginStart="16dp"
+
+            android:text="Tirar Foto"
+
+            app:icon="@drawable/ic_camera"
+
+            app:iconGravity="textStart"
+
+            app:layout_constraintEnd_toEndOf="parent"
+
+            app:layout_constraintStart_toEndOf="@id/imageView_produto_foto"
+
+            app:layout_constraintTop_toTopOf="@id/imageView_produto_foto"
+
+            app:strokeColor="@color/stoki_green" />
+
+
+
+        <com.google.android.material.button.MaterialButton
+
+            android:id="@+id/button_galeria"
+
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+
+            android:layout_width="0dp"
+
+            android:layout_height="wrap_content"
+
+            android:layout_marginStart="16dp"
+
+            android:layout_marginTop="8dp"
+
+            android:text="Galeria"
+
+            app:icon="@drawable/ic_gallery"
+
+            app:iconGravity="textStart"
+
+            app:layout_constraintEnd_toEndOf="parent"
+
+            app:layout_constraintStart_toEndOf="@id/imageView_produto_foto"
+
+            app:layout_constraintTop_toBottomOf="@id/button_tirar_foto" />
+
+
+
+        <com.google.android.material.textfield.TextInputLayout
+
+            android:id="@+id/layout_nome_produto"
+
+            android:layout_width="0dp"
+
+            android:layout_height="wrap_content"
+
+            android:layout_marginTop="24dp"
+
+            android:hint="Nome do Produto"
+
+            app:layout_constraintEnd_toEndOf="parent"
+
+            app:layout_constraintStart_toStartOf="parent"
+
+            app:layout_constraintTop_toBottomOf="@id/imageView_produto_foto">
+
+
+
+            <com.google.android.material.textfield.TextInputEditText
+
+                android:id="@+id/editText_nome_produto"
+
+                android:layout_width="match_parent"
+
+                android:layout_height="wrap_content" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+
+        <com.google.android.material.textfield.TextInputLayout
+
+            android:id="@+id/layout_codigo_barras"
+
+            android:layout_width="0dp"
+
+            android:layout_height="wrap_content"
+
+            android:layout_marginTop="16dp"
+
+            android:hint="Código de Barras"
+
+            app:endIconDrawable="@drawable/ic_scanner"
+
+            app:endIconMode="custom"
+
+            app:endIconTint="@color/stoki_green"
+
+            app:layout_constraintEnd_toEndOf="parent"
+
+            app:layout_constraintStart_toStartOf="parent"
+
+            app:layout_constraintTop_toBottomOf="@id/layout_nome_produto">
+
+
+
+            <com.google.android.material.textfield.TextInputEditText
+
+                android:id="@+id/editText_codigo_barras"
+
+                android:layout_width="match_parent"
+
+                android:layout_height="wrap_content" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+
+        <com.google.android.material.textfield.TextInputLayout
+
+            android:id="@+id/layout_categoria"
+
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+
+            android:layout_width="0dp"
+
+            android:layout_height="wrap_content"
+
+            android:layout_marginTop="16dp"
+
+            android:hint="Categoria"
+
+            app:layout_constraintEnd_toEndOf="parent"
+
+            app:layout_constraintStart_toStartOf="parent"
+
+            app:layout_constraintTop_toBottomOf="@id/layout_codigo_barras">
+
+
+
+            <AutoCompleteTextView
+
+                android:id="@+id/autoComplete_categoria"
+
+                android:layout_width="match_parent"
+
+                android:layout_height="wrap_content"
+
+                android:inputType="none" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+
+        <com.google.android.material.textfield.TextInputLayout
+
+            android:id="@+id/layout_quantidade"
+
+            android:layout_width="0dp"
+
+            android:layout_height="wrap_content"
+
+            android:layout_marginTop="16dp"
+
+            app:layout_constraintEnd_toEndOf="parent"
+
+            app:layout_constraintStart_toStartOf="parent"
+
+            app:layout_constraintTop_toBottomOf="@id/layout_categoria"
+
+            tools:hint="Quantidade Inicial">
+
+
+
+            <com.google.android.material.textfield.TextInputEditText
+
+                android:id="@+id/editText_quantidade"
+
+                android:layout_width="match_parent"
+
+                android:layout_height="wrap_content"
+
+                android:inputType="number" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+
+        <com.google.android.material.textfield.TextInputLayout
+
+            android:id="@+id/layout_preco_custo"
+
+            android:layout_width="0dp"
+
+            android:layout_height="wrap_content"
+
+            android:layout_marginTop="16dp"
+
+            android:layout_marginEnd="8dp"
+
+            android:hint="Preço de Custo"
+
+            app:layout_constraintEnd_toStartOf="@id/layout_preco_venda"
+
+            app:layout_constraintStart_toStartOf="parent"
+
+            app:layout_constraintTop_toBottomOf="@id/layout_quantidade">
+
+
+
+            <com.google.android.material.textfield.TextInputEditText
+
+                android:id="@+id/editText_preco_custo"
+
+                android:layout_width="match_parent"
+
+                android:layout_height="wrap_content"
+
+                android:inputType="numberDecimal" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+
+        <com.google.android.material.textfield.TextInputLayout
+
+            android:id="@+id/layout_preco_venda"
+
+            android:layout_width="0dp"
+
+            android:layout_height="wrap_content"
+
+            android:layout_marginStart="8dp"
+
+            android:hint="Preço de Venda"
+
+            app:layout_constraintEnd_toEndOf="parent"
+
+            app:layout_constraintStart_toEndOf="@id/layout_preco_custo"
+
+            app:layout_constraintTop_toTopOf="@id/layout_preco_custo">
+
+
+
+            <com.google.android.material.textfield.TextInputEditText
+
+                android:id="@+id/editText_preco_venda"
+
+                android:layout_width="match_parent"
+
+                android:layout_height="wrap_content"
+
+                android:inputType="numberDecimal" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+
+        <com.google.android.material.button.MaterialButton
+
+            android:id="@+id/button_concluir"
+
+            android:layout_width="0dp"
+
+            android:layout_height="60dp"
+
+            android:layout_marginTop="32dp"
+
+            android:backgroundTint="@color/stoki_green"
+
+            android:text="Concluir"
+
+            android:textColor="@color/black"
+
+            app:cornerRadius="16dp"
+
+            app:layout_constraintEnd_toEndOf="parent"
+
+            app:layout_constraintStart_toStartOf="parent"
+
+            app:layout_constraintTop_toBottomOf="@id/layout_preco_custo" />

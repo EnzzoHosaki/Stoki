@@ -50,8 +50,10 @@
             android:layout_weight="1"
             android:text="Venda"
             android:textAllCaps="false"
-            android:textColor="@color/white"
-            app:strokeColor="@color/stoki_green" />
+            app:strokeColor="@color/stoki_green"
+
+            app:backgroundTint="@color/toggle_button_background_color"
+            android:textColor="@color/toggle_button_text_color" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/button_compra"
@@ -61,8 +63,11 @@
             android:layout_weight="1"
             android:text="Compra"
             android:textAllCaps="false"
-            android:textColor="@color/white"
-            app:strokeColor="@color/stoki_green" />
+            app:strokeColor="@color/stoki_green"
+
+            app:backgroundTint="@color/toggle_button_background_color"
+            android:textColor="@color/toggle_button_text_color" />
+
     </com.google.android.material.button.MaterialButtonToggleGroup>
 
     <TextView
