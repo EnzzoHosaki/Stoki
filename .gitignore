@@ -1,0 +1,21 @@
+# Arquivos de Build
+/build
+*.apk
+*.aab
+*.ap_
+*.dex
+*.class
+
+# Arquivos de configuração local (NÃO compartilhe suas chaves!)
+local.properties
+
+# Arquivos do IntelliJ / Android Studio
+.idea/
+*.iml
+.gradle
+gradle.properties
+
+# Arquivos de log e cache
+*.log
+captures/
+.DS_Store
