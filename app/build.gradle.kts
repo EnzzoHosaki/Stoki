@@ -1,9 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    // Remova o plugin do compose daqui, ele é gerenciado de outra forma agora.
-    // alias(libs.plugins.kotlin.compose)
-    alias(libs.plugins.ksp) // <-- ADICIONE ESTA LINHA
+    alias(libs.plugins.ksp)
 }
 
 android {

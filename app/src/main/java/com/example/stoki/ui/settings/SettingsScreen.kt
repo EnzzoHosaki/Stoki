@@ -19,12 +19,11 @@ import androidx.compose.material.icons.filled.Add
 fun SettingsScreen(
     isDarkTheme: Boolean,
     onThemeChange: (Boolean) -> Unit,
-    viewModel: ProductListViewModel // Recebe o ViewModel
+    viewModel: ProductListViewModel
 ) {
     val categories by viewModel.categories.collectAsState()
     val brands by viewModel.brands.collectAsState()
 
-    // Estados para controlar a visibilidade dos diálogos de "adicionar"
     var showAddCategoryDialog by remember { mutableStateOf(false) }
     var showAddBrandDialog by remember { mutableStateOf(false) }
 
@@ -33,7 +32,6 @@ fun SettingsScreen(
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        // Seção do Tema
         item {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -46,7 +44,6 @@ fun SettingsScreen(
             Divider(modifier = Modifier.padding(top = 16.dp))
         }
 
-        // Seção de Gerenciar Categorias
         item {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text("Gerenciar Categorias", style = MaterialTheme.typography.titleMedium, modifier = Modifier.weight(1f))
@@ -62,7 +59,6 @@ fun SettingsScreen(
             )
         }
 
-        // Seção de Gerenciar Marcas
         item {
             Spacer(modifier = Modifier.height(16.dp))
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -79,7 +75,6 @@ fun SettingsScreen(
             )
         }
     }
-    // DIÁLOGO PARA ADICIONAR NOVA CATEGORIA
     if (showAddCategoryDialog) {
         var newCategoryName by remember { mutableStateOf("") }
         AlertDialog(
@@ -108,7 +103,6 @@ fun SettingsScreen(
         )
     }
 
-    // DIÁLOGO PARA ADICIONAR NOVA MARCA
     if (showAddBrandDialog) {
         var newBrandName by remember { mutableStateOf("") }
         AlertDialog(
@@ -138,7 +132,6 @@ fun SettingsScreen(
     }
 }
 
-// Um Composable reutilizável para os itens da lista
 @Composable
 fun ManagementListItem(name: String, onDelete: () -> Unit) {
     var showDeleteDialog by remember { mutableStateOf(false) }
@@ -156,7 +149,6 @@ fun ManagementListItem(name: String, onDelete: () -> Unit) {
         }
     }
 
-    // Diálogo de confirmação para deletar
     if (showDeleteDialog) {
         AlertDialog(
             onDismissRequest = { showDeleteDialog = false },

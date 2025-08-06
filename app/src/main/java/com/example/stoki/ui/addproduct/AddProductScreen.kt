@@ -40,6 +40,10 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.io.File
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.saveable.Saver
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.autoSaver
+import androidx.core.net.toUri
 
 fun createImageUri(context: Context): Uri {
     val imageFile = File(context.cacheDir, "images/product_image_${System.currentTimeMillis()}.jpg")
@@ -51,6 +55,11 @@ fun createImageUri(context: Context): Uri {
     )
 }
 
+val UriSaver = Saver<Uri?, String>(
+    save = { it?.toString() ?: "" },
+    restore = { if (it.isNotEmpty()) it.toUri() else null }
+)
+
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Composable
 fun AddProductScreen(
@@ -60,9 +69,8 @@ fun AddProductScreen(
     productId: Int?
 ) {
     val isEditMode = productId != null && productId != -1
-    var originalProduct by rememberSaveable { mutableStateOf<Product?>(null) }
+    var originalProduct by remember { mutableStateOf<Product?>(null) }
 
-    // Declarando todos os estados
     var productCode by rememberSaveable { mutableStateOf("") }
     var name by rememberSaveable { mutableStateOf("") }
     var sku by rememberSaveable { mutableStateOf("") }
@@ -70,7 +78,7 @@ fun AddProductScreen(
     var quantity by rememberSaveable { mutableStateOf("") }
     var costPrice by rememberSaveable { mutableStateOf("") }
     var salePrice by rememberSaveable { mutableStateOf("") }
-    var selectedImageUrl by rememberSaveable { mutableStateOf<Uri?>(null) }
+    var selectedImageUrl by rememberSaveable(stateSaver = UriSaver) { mutableStateOf<Uri?>(null) }
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
 
@@ -83,7 +91,6 @@ fun AddProductScreen(
     var showAddCategoryDialog by rememberSaveable { mutableStateOf(false) }
     var showAddBrandDialog by rememberSaveable { mutableStateOf(false) }
 
-    // Validação dos campos obrigatórios
     val isFormValid by remember(name, selectedCategory, selectedBrand) { // <-- Correção
         derivedStateOf { name.isNotBlank() && selectedCategory.isNotBlank() && selectedBrand.isNotBlank() }
     }
@@ -147,7 +154,7 @@ fun AddProductScreen(
                 onClick = {
                     val productToSave = Product(
                         id = if (isEditMode) originalProduct!!.id else 0,
-                        productCode = productCode, // Usa o código do estado
+                        productCode = productCode,
                         name = name,
                         sku = sku.ifEmpty { null },
                         category = selectedCategory,
@@ -195,7 +202,18 @@ fun AddProductScreen(
                         }
                     }
                     Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                        OutlinedButton(onClick = { val newUri = createImageUri(context); selectedImageUrl = newUri; cameraLauncher.launch(newUri) }, modifier = Modifier.fillMaxWidth()) { Text("Tirar Foto") }
+                        OutlinedButton(
+                            onClick = {
+                                if (cameraPermissionState.status.isGranted) {
+                                    val newUri = createImageUri(context)
+                                    selectedImageUrl = newUri
+                                    cameraLauncher.launch(newUri)
+                                } else {
+                                    cameraPermissionState.launchPermissionRequest()
+                                }
+                            },
+                            modifier = Modifier.fillMaxWidth()
+                        ) { Text("Tirar Foto") }
                         OutlinedButton(onClick = { photoPickerLauncher.launch("image/*") }, modifier = Modifier.fillMaxWidth()) { Text("Galeria") }
                     }
                 }
@@ -273,7 +291,6 @@ fun AddProductScreen(
             }
         }
     }
-    // DIÁLOGO PARA ADICIONAR NOVA CATEGORIA
     if (showAddCategoryDialog) {
         var newCategoryName by rememberSaveable { mutableStateOf("") }
         AlertDialog(
@@ -297,8 +314,6 @@ fun AddProductScreen(
             }
         )
     }
-
-    // DIÁLOGO PARA ADICIONAR NOVA MARCA
     if (showAddBrandDialog) {
         var newBrandName by rememberSaveable { mutableStateOf("") }
         AlertDialog(

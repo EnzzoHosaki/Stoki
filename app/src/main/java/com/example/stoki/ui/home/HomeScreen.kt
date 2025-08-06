@@ -19,34 +19,36 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.example.stoki.data.CategoryStock
 import com.example.stoki.ui.productlist.ProductListViewModel
+import com.example.stoki.ui.home.HomeViewModel
 
 @Composable
-fun HomeScreen(viewModel: ProductListViewModel) {
+fun HomeScreen(viewModel: HomeViewModel) {
     val totalStockValue by viewModel.totalStockValue.collectAsState()
     val lowStockCount by viewModel.lowStockCount.collectAsState()
     val stockByCategory by viewModel.stockByCategory.collectAsState()
+    val totalRevenue by viewModel.totalRevenue.collectAsState()
+    val topSellingProduct by viewModel.topSellingProduct.collectAsState()
+    val topRevenueProduct by viewModel.topRevenueProduct.collectAsState()
 
     LazyColumn(
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        // Cartões de Estatísticas
         item {
             Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                 StatCard(
-                    title = "Valor Total do Estoque",
+                    title = "Valor do Estoque",
                     value = "R$ ${"%.2f".format(totalStockValue)}",
                     modifier = Modifier.weight(1f)
                 )
                 StatCard(
-                    title = "Itens Estoque Baixo",
+                    title = "Estoque Baixo",
                     value = lowStockCount.toString(),
                     modifier = Modifier.weight(1f)
                 )
             }
         }
 
-        // Gráfico de Estoque por Categoria
         if (stockByCategory.isNotEmpty()) {
             item {
                 Card(modifier = Modifier.fillMaxWidth()) {
@@ -57,7 +59,6 @@ fun HomeScreen(viewModel: ProductListViewModel) {
                             fontWeight = FontWeight.Bold
                         )
                         Spacer(modifier = Modifier.height(24.dp))
-                        // NOSSO NOVO GRÁFICO CUSTOMIZADO
                         SimpleBarChart(
                             data = stockByCategory,
                             modifier = Modifier.fillMaxWidth().height(200.dp)
@@ -66,6 +67,39 @@ fun HomeScreen(viewModel: ProductListViewModel) {
                 }
             }
         }
+
+        item {
+            Card(modifier = Modifier.fillMaxWidth()) {
+                Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text("Resumo Financeiro", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                    InfoRow("Receita Total de Vendas:", "R$ ${"%.2f".format(totalRevenue)}")
+                }
+            }
+        }
+
+        if (topSellingProduct != null || topRevenueProduct != null) {
+            item {
+                Card(modifier = Modifier.fillMaxWidth()) {
+                    Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Text("Destaques de Vendas", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+
+                        if (topSellingProduct?.productId == topRevenueProduct?.productId && topSellingProduct != null) {
+                            InfoRow("Produto Destaque:", topSellingProduct!!.productName)
+                            InfoRow("Total Vendido:", "${topSellingProduct!!.totalQuantity} un")
+                            InfoRow("Receita Gerada:", "R$ ${"%.2f".format(topRevenueProduct!!.totalAmount)}")
+                        } else {
+                            topSellingProduct?.let {
+                                InfoRow("Mais Vendido (Unidades):", "${it.productName} (${it.totalQuantity} un)")
+                            }
+                            topRevenueProduct?.let {
+                                InfoRow("Maior Receita:", "${it.productName} (R$ ${"%.2f".format(it.totalAmount)})")
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
     }
 }
 
@@ -74,7 +108,7 @@ fun SimpleBarChart(
     data: List<CategoryStock>,
     modifier: Modifier = Modifier
 ) {
-    val maxValue = data.maxOfOrNull { it.totalQuantity } ?: 1
+    val maxValue = data.maxOfOrNull { it.totalQuantity }?.toFloat() ?: 1f
 
     Row(
         modifier = modifier,
@@ -85,18 +119,26 @@ fun SimpleBarChart(
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Bottom,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(horizontal = 4.dp)
             ) {
-                // A Barra
                 Box(
                     modifier = Modifier
-                        .fillMaxWidth(0.6f) // Largura da barra
-                        .fillMaxHeight((categoryStock.totalQuantity.toFloat() / maxValue.toFloat()))
-                        .clip(RoundedCornerShape(topStart = 4.dp, topEnd = 4.dp))
-                        .background(MaterialTheme.colorScheme.primary)
-                )
+                        .fillMaxWidth()
+                        .weight(1f),
+                    contentAlignment = Alignment.BottomCenter
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .fillMaxHeight(categoryStock.totalQuantity / maxValue)
+                            .clip(RoundedCornerShape(topStart = 4.dp, topEnd = 4.dp))
+                            .background(MaterialTheme.colorScheme.primary)
+                    )
+                }
+
                 Spacer(modifier = Modifier.height(4.dp))
-                // O Label da Categoria
                 Text(
                     text = categoryStock.category,
                     style = MaterialTheme.typography.bodySmall,
@@ -109,6 +151,13 @@ fun SimpleBarChart(
     }
 }
 
+@Composable
+fun InfoRow(label: String, value: String) {
+    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+        Text(text = label, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        Text(text = value, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold)
+    }
+}
 
 @Composable
 fun StatCard(

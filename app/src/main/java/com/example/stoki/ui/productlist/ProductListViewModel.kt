@@ -26,17 +26,15 @@ import com.example.stoki.data.CategoryStock
 @OptIn(ExperimentalCoroutinesApi::class)
 class ProductListViewModel(private val repository: ProductRepository) : ViewModel() {
 
-    // Estados para os filtros
     private val _searchQuery = MutableStateFlow("")
     val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
 
-    private val _categoryFilter = MutableStateFlow("") // Guardará o nome da categoria selecionada
+    private val _categoryFilter = MutableStateFlow("")
     val categoryFilter: StateFlow<String> = _categoryFilter.asStateFlow()
 
-    private val _brandFilter = MutableStateFlow("") // Guardará o nome da marca selecionada
+    private val _brandFilter = MutableStateFlow("")
     val brandFilter: StateFlow<String> = _brandFilter.asStateFlow()
 
-    // Buscando as listas de categorias e marcas do banco
     val categories: StateFlow<List<Category>> = repository.getAllCategories()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
@@ -46,15 +44,13 @@ class ProductListViewModel(private val repository: ProductRepository) : ViewMode
     val movements: StateFlow<List<ProductMovement>> = repository.getAllMovements()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
-    // O fluxo de produtos agora combina os 3 filtros!
     val products: StateFlow<List<Product>> = combine(
         _searchQuery.debounce(300),
         _categoryFilter,
         _brandFilter
     ) { query, category, brand ->
-        Triple(query, category, brand) // Agrupa os 3 valores
+        Triple(query, category, brand)
     }.flatMapLatest { (query, category, brand) ->
-        // Sempre que um dos 3 filtros mudar, esta busca é refeita
         repository.getAllProducts(query, category, brand)
     }.stateIn(
         scope = viewModelScope,
@@ -62,12 +58,10 @@ class ProductListViewModel(private val repository: ProductRepository) : ViewMode
         initialValue = emptyList()
     )
 
-    // Funções para a UI atualizar os filtros
     fun onSearchQueryChange(newQuery: String) { _searchQuery.value = newQuery }
     fun onCategoryFilterChange(newCategory: String) { _categoryFilter.value = newCategory }
     fun onBrandFilterChange(newBrand: String) { _brandFilter.value = newBrand }
 
-    // Funções para adicionar novas categorias e marcas
     fun insertCategory(name: String) = viewModelScope.launch {
         if (name.isNotBlank()) repository.insertCategory(Category(name = name))
     }
@@ -103,17 +97,14 @@ class ProductListViewModel(private val repository: ProductRepository) : ViewMode
         val existingItem = currentList.find { it.product.id == product.id }
 
         val newList = if (existingItem != null) {
-            // Se o item já existe, criamos uma nova lista mapeando sobre a antiga
             currentList.map {
                 if (it.product.id == product.id) {
-                    // Criamos uma cópia do item com a quantidade atualizada
                     it.copy(quantity = it.quantity + quantity)
                 } else {
-                    it // Mantemos os outros itens como estão
+                    it
                 }
             }
         } else {
-            // Se é um item novo, criamos uma nova lista adicionando-o
             currentList + TransactionItem(product, quantity, price)
         }
         _transactionItems.value = newList
@@ -138,14 +129,11 @@ class ProductListViewModel(private val repository: ProductRepository) : ViewMode
         )
 
     val totalStockValue: StateFlow<Double> = repository.getTotalStockValue()
-        .map { it ?: 0.0 } // Converte nulo para 0.0
+        .map { it ?: 0.0 }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0.0)
 
     val lowStockCount: StateFlow<Int> = repository.getLowStockCount()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0)
-
-    val stockByCategory: StateFlow<List<CategoryStock>> = repository.getStockByCategory()
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 }
 
 class ProductListViewModelFactory(private val repository: ProductRepository) : ViewModelProvider.Factory {

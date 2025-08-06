@@ -57,11 +57,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
 import com.example.stoki.ui.movements.AddMovementScreen
 import com.example.stoki.ui.productselection.ProductSelectionScreen
+import com.example.stoki.ui.home.HomeViewModel
+import com.example.stoki.ui.home.HomeViewModelFactory
 
 class MainActivity : ComponentActivity() {
     private val database by lazy { AppDatabase.getDatabase(this) }
     private val repository by lazy { ProductRepository(database) }
-    private val viewModel: ProductListViewModel by viewModels { ProductListViewModelFactory(repository) }
+    //private val viewModel: ProductListViewModel by viewModels { ProductListViewModelFactory(repository) }
 
     private val settingsManager by lazy { SettingsManager(this) }
 
@@ -80,22 +82,17 @@ class MainActivity : ComponentActivity() {
                 val navBackStackEntry by navController.currentBackStackEntryAsState()
                 val currentDestination = navBackStackEntry?.destination
 
-                // --- LÓGICA ADICIONADA ---
-                // 1. Criamos uma lista com as rotas das telas principais.
                 val mainScreenRoutes = NavigationItem.entries.map { it.route }
-                // 2. Verificamos se a tela atual é uma das telas principais.
                 val shouldShowBars = currentDestination?.route in mainScreenRoutes
 
-                // 3. O título só é definido se for uma tela principal.
                 val currentScreenTitle = if (shouldShowBars) {
                     NavigationItem.entries.find { it.route == currentDestination?.route }?.title ?: "Stoki"
                 } else {
-                    "" // Deixamos o título vazio para as outras telas
+                    ""
                 }
 
                 Scaffold(
                     topBar = {
-                        // A TopAppBar só será exibida se 'shouldShowBars' for verdadeiro
                         if (shouldShowBars) {
                             CenterAlignedTopAppBar(
                                 title = { Text(currentScreenTitle) },
@@ -106,10 +103,8 @@ class MainActivity : ComponentActivity() {
                         }
                     },
                     bottomBar = {
-                        // A BottomBar também só será exibida nas telas principais
                         if (shouldShowBars) {
                             NavigationBar {
-                                // ... (o código do NavigationBarItem continua o mesmo)
                                 val navigationItems = listOf(
                                     NavigationItem.Home,
                                     NavigationItem.Stock,
@@ -128,7 +123,6 @@ class MainActivity : ComponentActivity() {
                             }
                         }
                     },
-                    // O FloatingActionButton também será condicional
                     floatingActionButton = {
                         if (currentDestination?.route == NavigationItem.Stock.route) {
                             FloatingActionButton(
@@ -145,9 +139,35 @@ class MainActivity : ComponentActivity() {
                         startDestination = NavigationItem.Home.route,
                         Modifier.padding(innerPadding)
                     ) {
-                        composable(NavigationItem.Home.route) { HomeScreen(viewModel = viewModel) }
-                        composable(NavigationItem.Stock.route) { ProductListScreen(navController, viewModel) }
+                        composable(NavigationItem.Home.route) {
+                            val homeViewModel: HomeViewModel by viewModels { HomeViewModelFactory(repository) }
+                            HomeScreen(viewModel = homeViewModel)
+                        }
+
+                        composable(NavigationItem.Stock.route) {
+                            val productListViewModel: ProductListViewModel by viewModels {
+                                ProductListViewModelFactory(
+                                    repository
+                                )
+                            }
+                            ProductListScreen(navController, productListViewModel)
+                        }
+
+                        composable(NavigationItem.Movements.route) {
+                            val productListViewModel: ProductListViewModel by viewModels {
+                                ProductListViewModelFactory(
+                                    repository
+                                )
+                            }
+                            MovementScreen(navController, productListViewModel)
+                        }
+
                         composable(NavigationItem.Settings.route) {
+                            val productListViewModel: ProductListViewModel by viewModels {
+                                ProductListViewModelFactory(
+                                    repository
+                                )
+                            }
                             SettingsScreen(
                                 isDarkTheme = isDarkTheme ?: isSystemInDarkTheme(),
                                 onThemeChange = { isChecked ->
@@ -155,33 +175,64 @@ class MainActivity : ComponentActivity() {
                                         settingsManager.setTheme(isChecked)
                                     }
                                 },
-                                viewModel = viewModel
+                                viewModel = productListViewModel
                             )
                         }
+
                         composable(
                             route = "productDetail/{productId}",
                             arguments = listOf(navArgument("productId") { type = NavType.IntType })
                         ) { backStackEntry ->
+                            val productListViewModel: ProductListViewModel by viewModels {
+                                ProductListViewModelFactory(
+                                    repository
+                                )
+                            }
                             val productId = backStackEntry.arguments?.getInt("productId") ?: 0
-                            ProductDetailScreen(productId, navController, viewModel)
+                            ProductDetailScreen(productId, navController, productListViewModel)
                         }
                         composable(
                             route = "addProduct?productId={productId}",
-                            arguments = listOf(navArgument("productId") { type = NavType.IntType; defaultValue = -1 })
+                            arguments = listOf(navArgument("productId") {
+                                type = NavType.IntType; defaultValue = -1
+                            })
                         ) { backStackEntry ->
+                            val productListViewModel: ProductListViewModel by viewModels {
+                                ProductListViewModelFactory(
+                                    repository
+                                )
+                            }
                             val productId = backStackEntry.arguments?.getInt("productId")
-                            val barcodeResult = navController.currentBackStackEntry?.savedStateHandle?.getStateFlow<String?>("barcode_result", null)?.collectAsState()
-                            AddProductScreen(navController, viewModel, barcodeResult?.value, productId)
+                            val barcodeResult =
+                                navController.currentBackStackEntry?.savedStateHandle?.getStateFlow<String?>(
+                                    "barcode_result",
+                                    null
+                                )?.collectAsState()
+                            AddProductScreen(
+                                navController,
+                                productListViewModel,
+                                barcodeResult?.value,
+                                productId
+                            )
                         }
                         composable("barcodeScanner") {
                             BarcodeScannerScreen(navController)
                         }
-                        composable(NavigationItem.Movements.route) { MovementScreen(navController, viewModel) }
                         composable("addMovement") {
-                            AddMovementScreen(navController, viewModel)
+                            val productListViewModel: ProductListViewModel by viewModels {
+                                ProductListViewModelFactory(
+                                    repository
+                                )
+                            }
+                            AddMovementScreen(navController, productListViewModel)
                         }
                         composable("productSelection") {
-                            ProductSelectionScreen(navController, viewModel)
+                            val productListViewModel: ProductListViewModel by viewModels {
+                                ProductListViewModelFactory(
+                                    repository
+                                )
+                            }
+                            ProductSelectionScreen(navController, productListViewModel)
                         }
                     }
                 }
@@ -190,7 +241,6 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-// Função auxiliar para a lógica de navegação da barra inferior
 fun navigateTo(navController: NavController, route: String) {
     navController.navigate(route) {
         popUpTo(navController.graph.findStartDestination().id) {
@@ -205,7 +255,6 @@ fun navigateTo(navController: NavController, route: String) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProductListScreen(navController: NavController, viewModel: ProductListViewModel) {
-    // Buscando todos os estados necessários do ViewModel
     val products by viewModel.products.collectAsState()
     val searchQuery by viewModel.searchQuery.collectAsState()
     val categories by viewModel.categories.collectAsState()
@@ -213,12 +262,10 @@ fun ProductListScreen(navController: NavController, viewModel: ProductListViewMo
     val selectedCategory by viewModel.categoryFilter.collectAsState()
     val selectedBrand by viewModel.brandFilter.collectAsState()
 
-    // Estados para controlar se os menus de filtro estão abertos ou fechados
     var isCategoryFilterExpanded by remember { mutableStateOf(false) }
     var isBrandFilterExpanded by remember { mutableStateOf(false) }
 
     Column {
-        // Barra de Busca (continua a mesma)
         OutlinedTextField(
             value = searchQuery,
             onValueChange = { viewModel.onSearchQueryChange(it) },
@@ -229,14 +276,12 @@ fun ProductListScreen(navController: NavController, viewModel: ProductListViewMo
             singleLine = true
         )
 
-        // --- LINHA DE FILTROS ---
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            // Filtro de Categoria
             ExposedDropdownMenuBox(
                 expanded = isCategoryFilterExpanded,
                 onExpandedChange = { isCategoryFilterExpanded = it },
@@ -254,7 +299,6 @@ fun ProductListScreen(navController: NavController, viewModel: ProductListViewMo
                     expanded = isCategoryFilterExpanded,
                     onDismissRequest = { isCategoryFilterExpanded = false }
                 ) {
-                    // Opção para limpar o filtro
                     DropdownMenuItem(
                         text = { Text("Todas Cat.") },
                         onClick = {
@@ -262,7 +306,6 @@ fun ProductListScreen(navController: NavController, viewModel: ProductListViewMo
                             isCategoryFilterExpanded = false
                         }
                     )
-                    // Opções do banco de dados
                     categories.forEach { category ->
                         DropdownMenuItem(
                             text = { Text(category.name) },
@@ -275,7 +318,6 @@ fun ProductListScreen(navController: NavController, viewModel: ProductListViewMo
                 }
             }
 
-            // Filtro de Marca
             ExposedDropdownMenuBox(
                 expanded = isBrandFilterExpanded,
                 onExpandedChange = { isBrandFilterExpanded = it },
@@ -293,7 +335,6 @@ fun ProductListScreen(navController: NavController, viewModel: ProductListViewMo
                     expanded = isBrandFilterExpanded,
                     onDismissRequest = { isBrandFilterExpanded = false }
                 ) {
-                    // Opção para limpar o filtro
                     DropdownMenuItem(
                         text = { Text("Todas Marcas") },
                         onClick = {
@@ -301,7 +342,6 @@ fun ProductListScreen(navController: NavController, viewModel: ProductListViewMo
                             isBrandFilterExpanded = false
                         }
                     )
-                    // Opções do banco de dados
                     brands.forEach { brand ->
                         DropdownMenuItem(
                             text = { Text(brand.name) },
@@ -315,7 +355,6 @@ fun ProductListScreen(navController: NavController, viewModel: ProductListViewMo
             }
         }
 
-        // Lista de Produtos (continua a mesma)
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -357,7 +396,7 @@ fun ProductListItem(product: Product, navController: NavController) {
                     text = product.name,
                     fontWeight = FontWeight.Bold,
                     fontSize = 16.sp,
-                    color = MaterialTheme.colorScheme.onSurface // <-- Correção
+                    color = MaterialTheme.colorScheme.onSurface
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(

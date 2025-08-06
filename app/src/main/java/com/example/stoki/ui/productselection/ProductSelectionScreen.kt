@@ -34,11 +34,8 @@ fun ProductSelectionScreen(
     navController: NavController,
     viewModel: ProductListViewModel
 ) {
-    // AGORA USAMOS A NOVA LISTA, SEMPRE COMPLETA
     val allProducts by viewModel.allProducts.collectAsState()
     var selectedProduct by remember { mutableStateOf<Product?>(null) }
-
-    // O LAUNCHEDEFFECT FOI REMOVIDO DAQUI
 
     Scaffold(
         topBar = {
@@ -57,7 +54,6 @@ fun ProductSelectionScreen(
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            // A LISTA AGORA USA 'allProducts'
             items(allProducts) { product ->
                 SelectableProductItem(
                     product = product,
@@ -95,12 +91,10 @@ fun TransactionItemDialog(
     var price by rememberSaveable { mutableStateOf((originalPrice * 100).toLong().toString()) }
     var discount by rememberSaveable { mutableStateOf("0.00") }
 
-    // --- LÓGICA DE VALIDAÇÃO ---
     var isQuantityError by remember { mutableStateOf(false) }
     var quantityErrorMessage by remember { mutableStateOf("") }
     val quantityAsInt = quantity.toIntOrNull() ?: 0
 
-    // Efeito para atualizar o preço quando o desconto muda
     LaunchedEffect(discount) {
         val discountValue = discount.replace(",", ".").toDoubleOrNull() ?: 0.0
         if (discountValue in 0.0..100.0) {
@@ -109,7 +103,6 @@ fun TransactionItemDialog(
         }
     }
 
-    // Efeito para atualizar o desconto quando o preço muda
     LaunchedEffect(price) {
         val priceValue = (price.toDoubleOrNull() ?: 0.0) / 100.0
         if (originalPrice > 0) {
@@ -125,12 +118,10 @@ fun TransactionItemDialog(
         title = { Text("Adicionar ${product.name}") },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                // CAMPO DE QUANTIDADE ATUALIZADO
                 OutlinedTextField(
                     value = quantity,
                     onValueChange = {
                         val newQty = it.toIntOrNull() ?: 0
-                        // A validação só se aplica para VENDAS
                         if (transactionType == MovementType.SALE) {
                             if (newQty > product.quantity) {
                                 isQuantityError = true
@@ -168,7 +159,6 @@ fun TransactionItemDialog(
                     val finalPrice = (price.toDoubleOrNull() ?: 0.0) / 100.0
                     onConfirm(product, quantityAsInt, finalPrice)
                 },
-                // O botão é desabilitado se a quantidade for 0 ou se houver erro de estoque
                 enabled = quantityAsInt > 0 && !isQuantityError
             ) { Text("Confirmar") }
         },

@@ -27,7 +27,6 @@ fun ProductDetailScreen(
     navController: NavController,
     viewModel: ProductListViewModel
 ) {
-    // Busca o produto e observa suas mudanças
     val product by viewModel.getProductById(productId).collectAsState()
     var showDeleteDialog by remember { mutableStateOf(false) }
 
@@ -43,13 +42,11 @@ fun ProductDetailScreen(
             )
         }
     ) { paddingValues ->
-        // Se o produto ainda não foi carregado, mostra um indicador de progresso
         if (product == null) {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = androidx.compose.ui.Alignment.Center) {
                 CircularProgressIndicator()
             }
         } else {
-            // Se o produto foi carregado, exibe os detalhes
             LazyColumn(modifier = Modifier.fillMaxSize().padding(paddingValues).padding(16.dp)) {
                 item {
                     AsyncImage(
@@ -95,7 +92,6 @@ fun ProductDetailScreen(
         }
     }
 
-    // Diálogo de confirmação de exclusão
     if (showDeleteDialog) {
         AlertDialog(
             onDismissRequest = { showDeleteDialog = false },

@@ -42,8 +42,7 @@ fun BarcodeScannerScreen(navController: NavController) {
 
     val barcodeAnalyser = remember {
         BarcodeAnalyser { barcode ->
-            // Garante que a navegação aconteça na thread principal
-            scope.launch { // <-- ENVOLVA COM O LAUNCH
+            scope.launch {
                 navController.previousBackStackEntry
                     ?.savedStateHandle
                     ?.set("barcode_result", barcode)
@@ -53,7 +52,6 @@ fun BarcodeScannerScreen(navController: NavController) {
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
-        // Câmera Preview
         AndroidView(
             modifier = Modifier.fillMaxSize(),
             factory = { factoryContext ->
@@ -78,22 +76,18 @@ fun BarcodeScannerScreen(navController: NavController) {
                             lifecycleOwner, cameraSelector, preview, imageAnalysis
                         )
                     } catch (e: Exception) {
-                        // Lidar com erros
                     }
                 }, ContextCompat.getMainExecutor(factoryContext))
                 previewView
             }
         )
 
-        // Overlay (Sobreposição) com a "janela" do scanner
         Canvas(modifier = Modifier.fillMaxSize()) {
-            val rectSize = size * 0.7f // A janela será 70% do tamanho da tela
+            val rectSize = size * 0.7f
             val topLeft = Offset((size.width - rectSize.width) / 2, (size.height - rectSize.height) / 2)
 
-            // Desenha a sombra escura em volta
             drawRect(color = Color.Black.copy(alpha = 0.5f))
 
-            // "Corta" um retângulo transparente no meio
             drawRoundRect(
                 topLeft = topLeft,
                 size = rectSize,
@@ -101,7 +95,6 @@ fun BarcodeScannerScreen(navController: NavController) {
                 color = Color.Transparent,
                 blendMode = BlendMode.Clear
             )
-            // Desenha a borda branca em volta do corte
             drawRoundRect(
                 topLeft = topLeft,
                 size = rectSize,
@@ -111,7 +104,6 @@ fun BarcodeScannerScreen(navController: NavController) {
             )
         }
 
-        // Texto de instrução e botão de voltar
         Column(
             modifier = Modifier.fillMaxSize().padding(16.dp),
             verticalArrangement = Arrangement.SpaceBetween

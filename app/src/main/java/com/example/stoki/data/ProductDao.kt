@@ -31,15 +31,12 @@ interface ProductDao {
     @Query("SELECT * FROM products ORDER BY name ASC")
     fun getAllProducts(): Flow<List<Product>>
 
-    // Calcula o valor total do estoque (soma de (preço de custo * quantidade))
     @Query("SELECT SUM(costPrice * quantity) FROM products")
-    fun getTotalStockValue(): Flow<Double?> // Retorna nulo se não houver produtos
+    fun getTotalStockValue(): Flow<Double?>
 
-    // Conta quantos produtos estão com estoque baixo (ex: < 5 unidades)
     @Query("SELECT COUNT(*) FROM products WHERE quantity < :lowStockThreshold")
     fun getLowStockCount(lowStockThreshold: Int = 5): Flow<Int>
 
-    // Agrupa os produtos por categoria e soma suas quantidades
     @Query("SELECT category, SUM(quantity) as totalQuantity FROM products GROUP BY category ORDER BY totalQuantity DESC")
     fun getStockByCategory(): Flow<List<CategoryStock>>
 }

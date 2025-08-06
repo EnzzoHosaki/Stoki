@@ -73,7 +73,6 @@ fun AddMovementScreen(
         }
     ) { paddingValues ->
         Column(modifier = Modifier.fillMaxSize().padding(paddingValues).padding(horizontal = 16.dp)) {
-            // Seletor de Venda/Compra
             SegmentedButton(
                 selectedType = transactionType,
                 onTypeSelected = { viewModel.setTransactionType(it) }
@@ -81,13 +80,12 @@ fun AddMovementScreen(
 
             Text("Itens", style = MaterialTheme.typography.titleMedium, modifier = Modifier.padding(vertical = 16.dp))
 
-            // Lista de Itens
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier.weight(1f) // Ocupa o espaço disponível
+                modifier = Modifier.weight(1f)
             ) {
                 items(transactionItems) { item ->
-                    TransactionItemRow(item = item) // Usando o novo Composable
+                    TransactionItemRow(item = item)
                 }
                 item {
                     TextButton(onClick = { navController.navigate("productSelection") }) {
@@ -100,8 +98,6 @@ fun AddMovementScreen(
         }
     }
 }
-
-// Adicione esta função no final do arquivo AddMovementScreen.kt
 
 @Composable
 fun TransactionItemRow(item: TransactionItem) {
